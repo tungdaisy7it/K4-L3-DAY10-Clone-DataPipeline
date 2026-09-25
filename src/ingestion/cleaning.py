@@ -90,6 +90,7 @@ def build_clean_dataframe(records: list[PaperRecord], run_date: datetime) -> pd.
 
     published_ts = df["published"].map(_to_utc_date)
     updated_ts = df["updated"].map(_to_utc_date).fillna(published_ts)
+    updated_ts = pd.to_datetime(updated_ts, errors="coerce", utc=True)
     valid = (
         df["paper_id"].str.len().gt(0)
         & df["title"].str.len().gt(0)
