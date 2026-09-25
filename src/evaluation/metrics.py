@@ -60,14 +60,26 @@ Return:
 """.strip()
     try:
         llm = build_llm(settings=settings, temperature=0.0).with_structured_output(JudgeVerdict)
-        return llm.invoke(prompt)
-    except Exception:
+        verdict = llm.invoke(prompt)
+        if not isinstance(verdict, JudgeVerdict):
+            raise ValueError("Judge returned no structured verdict.")
+        return verdict
+    except Exception as exc:
         score = 5 if _token_f1(reference, prediction) >= 0.95 else 3 if _token_f1(reference, prediction) >= 0.5 else 1
         return JudgeVerdict(
             score=score,
             correct=score >= 3,
-            reasoning="Fallback heuristic judge used because the LLM evaluator was unavailable.",
+            reasoning=f"Fallback heuristic judge used because the LLM evaluator was unavailable ({type(exc).__name__}).",
         )
+
+
+def _judge_backend(answers: list[dict[str, Any]]) -> str:
+    fallbacks = sum(1 for item in answers if item["judge"]["reasoning"].startswith("Fallback heuristic judge"))
+    if fallbacks == 0:
+        return "llm"
+    if fallbacks == len(answers):
+        return "heuristic_fallback"
+    return f"mixed ({fallbacks}/{len(answers)} heuristic)"
 
 
 def _run_ragas(settings: Settings, answers: list[dict[str, Any]]) -> dict[str, Any]:
@@ -136,6 +148,7 @@ def evaluate_pipeline(
         "mean_token_f1": mean(item["token_f1"] for item in answers),
         "judge_accuracy": mean(1.0 if item["judge"]["correct"] else 0.0 for item in answers),
         "mean_judge_score": mean(item["judge"]["score"] for item in answers),
+        "judge_backend": _judge_backend(answers),
     }
     summary["ragas"] = _run_ragas(settings, answers)
 
