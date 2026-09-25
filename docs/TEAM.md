@@ -56,6 +56,7 @@
 - **Công việc chi tiết đã hoàn thành:**
   - `src/ingestion/cleaning.py`: chuẩn hóa text, DOI lowercase làm `paper_id`, loại dòng thiếu title/summary/ngày, dedup giữ bản `updated` mới nhất, `age_days` theo ngày UTC, `text_for_embedding` 5 phần; tách `add_derived_columns` để corruption tái sử dụng.
   - `src/evaluation/testset.py`: 10 câu hỏi cố định, chọn bài cách đều theo thời gian, xoay vòng 4 dạng `summary/authors/date/categories`, câu hỏi khớp pattern của `qa._extract_answer`, bỏ tiêu đề chứa dấu `'`.
+  - Bổ sung data-contract validation cho benchmark: kiểm tra schema bắt buộc, bỏ ground truth rỗng, chọn document hợp lệ gần nhất không trùng và kiểm thử tính tất định.
 - **Điều học được / Đóng góp chính:**
   - Test set phải sinh từ dữ liệu sạch và giữ cố định cho cả 3 trạng thái; sinh lại từ dữ liệu bẩn sẽ che mất sự suy giảm.
 

@@ -74,3 +74,20 @@ def test_build_test_set_requires_enough_documents(settings, clean_df):
     apostrophes = clean_df.head(5).copy()
     apostrophes.loc[apostrophes.index[0], "title"] = "It's a title"
     assert all("It's" not in q["question"] for q in build_test_set(apostrophes, settings.paths.eval_testset))
+
+
+def test_build_test_set_validates_required_schema(settings, clean_df):
+    with pytest.raises(ValueError, match="missing required columns: categories_joined"):
+        build_test_set(clean_df.drop(columns="categories_joined"), settings.paths.eval_testset)
+
+
+def test_build_test_set_skips_empty_ground_truth_and_is_deterministic(settings, clean_df):
+    incomplete = clean_df.copy()
+    incomplete.loc[incomplete.index[1], "authors_joined"] = ""
+    incomplete.loc[incomplete.index[3], "categories_joined"] = ""
+    incomplete.loc[incomplete.index[5], "summary"] = ""
+    first = build_test_set(incomplete, settings.paths.eval_testset)
+    second = build_test_set(incomplete, settings.paths.eval_testset)
+    assert first == second
+    assert len({item["ground_truth_doc_ids"][0] for item in first}) == len(first)
+    assert all(item["ground_truth"].strip() for item in first)

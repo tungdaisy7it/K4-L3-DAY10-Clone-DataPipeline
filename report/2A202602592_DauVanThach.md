@@ -37,6 +37,7 @@
 | `text_for_embedding` 5 phần | `compose_text_for_embedding` | Title/Authors/Published/Categories/Summary | `test_clean_snapshot_shape` |
 | Dedup + lọc dòng xấu | `build_clean_dataframe` | Giữ bản `updated` mới nhất; bỏ dòng thiếu summary/ngày sai | `test_clean_dedup_normalize_and_filter` |
 | Test set 10 câu / 4 dạng | `testset.py` | summary 3, authors 3, date 2, categories 2 | Lệnh CP2: `Sinh được 10 câu hỏi test` |
+| Validation benchmark | `testset.py`, `tests/test_quality_and_testset.py` | Báo lỗi schema thiếu; bỏ ground truth rỗng; kết quả tất định | `test_build_test_set_*` |
 
 Output cụ thể: `data/eval/test_set.json` (sha256 `3541bfb96efb6757…`) được dùng chung cho cả 3 trạng thái baseline, corrupted và repaired.
 
@@ -50,6 +51,7 @@ Biến records thô thành một bảng có schema ổn định để embed, và
 
 - **Cleaning:** strip markup và whitespace cho mọi trường text; `authors`/`categories` được khử rỗng và khử trùng mà vẫn giữ thứ tự. DOI được lowercase làm `paper_id` (DOI không phân biệt hoa thường). Ngày được parse bằng `pd.to_datetime(utc=True, errors="coerce")`, dòng nào ngày không hợp lệ thì bỏ. `age_days = (ngày run − ngày published).days` theo ngày UTC. Khi trùng `paper_id`, sort theo `updated` giảm dần rồi `drop_duplicates(keep="first")` để giữ bản mới nhất. Cuối cùng sort theo `published` giảm dần, rồi `paper_id`, để output có thứ tự xác định.
 - **Test set:** lấy danh sách bài đã sort mới → cũ và chọn 10 vị trí cách đều (`round(i × (n−1)/9)`), nên đề phủ cả bài mới lẫn cũ. Dạng câu hỏi xoay vòng summary → authors → date → categories. Câu hỏi đặt tiêu đề trong dấu nháy đơn để `qa.answer_question` tra cứu chính xác được. Ground truth là `first_sentence(summary)`, `authors_joined`, `published` hoặc `categories_joined`.
+- **Data contract của test set:** kiểm tra đủ sáu cột bắt buộc trước khi sinh đề; loại paper thiếu ID/title hoặc title có dấu nháy đơn; nếu vị trí cách đều không có ground truth phù hợp thì chọn paper hợp lệ gần nhất chưa dùng. Nhờ vậy 10 câu hỏi không trùng document, không có đáp án rỗng và vẫn tái lập được giữa các lần chạy.
 
 ### Input, output và contract
 
@@ -127,18 +129,20 @@ Khác kỳ vọng: `blank_summary` trúng bài của eval_008 nhưng không làm
 2. `age_days` là cầu nối giữa cleaning và freshness monitoring.
 3. Benchmark chỉ nhìn thấy những lỗi trúng vào tài liệu nó hỏi tới.
 
+Kiểm thử bổ sung cho phần sở hữu của tôi bao gồm schema thiếu cột, ground truth rỗng, tính tất định của test set, và fallback `updated → published` trong cleaning.
+
 ### Nếu có thêm thời gian
 
 Sinh mỗi bài 1 câu hỏi và thêm câu hỏi không kèm tiêu đề để ép semantic search, rồi báo cáo thêm hit@1 để đo được lỗi xếp hạng giữa các bài gần trùng.
 
 ## 10. Cam kết của thành viên
 
-- [ ] Nội dung báo cáo phản ánh đúng phần việc và mức hiểu của tôi.
-- [ ] Tôi có thể giải thích luồng end-to-end, không chỉ module mình phụ trách.
-- [ ] Mọi kết luận về kết quả đều có artifact hoặc metric để đối chiếu.
-- [ ] Tôi không ghi "đã chạy thành công" cho phần chưa được kiểm chứng.
-- [ ] Báo cáo không chứa `.env`, API key, token hoặc secret.
-- [ ] Báo cáo này không phải bản sao nguyên văn của báo cáo nhóm hoặc báo cáo thành viên khác.
+- [x] Nội dung báo cáo phản ánh đúng phần việc và mức hiểu của tôi.
+- [x] Tôi có thể giải thích luồng end-to-end, không chỉ module mình phụ trách.
+- [x] Mọi kết luận về kết quả đều có artifact hoặc metric để đối chiếu.
+- [x] Tôi không ghi "đã chạy thành công" cho phần chưa được kiểm chứng.
+- [x] Báo cáo không chứa `.env`, API key, token hoặc secret.
+- [x] Báo cáo này không phải bản sao nguyên văn của báo cáo nhóm hoặc báo cáo thành viên khác.
 
 **Họ và tên:** Đậu Văn Thạch
-**Ngày xác nhận:** [YYYY-MM-DD]
+**Ngày xác nhận:** 2026-09-25
