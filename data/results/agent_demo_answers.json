@@ -1,0 +1,12 @@
+[
+  {
+    "question": "What is the summary of the paper 'Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines'?",
+    "answer": "**Summary of \"Continuous Benchmark Evaluation for Enterprise Retrieval Pipelines\"**\n\nStatic benchmarks fail to capture domain drift in enterprise knowledge bases. To address this, the paper establishes a synthetic test generator that automatically creates paired evaluation sets whenever new corpora are ingested, enabling continuous benchmark evaluation for enterprise retrieval pipelines.",
+    "error": null
+  },
+  {
+    "question": "Which indexed papers discuss data quality gates for RAG pipelines?",
+    "answer": "Based on the indexed papers in the corpus, the following papers specifically discuss data quality gates for Retrieval-Augmented Generation (RAG) pipelines:\n\n1. **\"Data Observability and Quality Gates for Production RAG Systems\"** \n   * **Authors:** Anh Tran, Quoc Pham\n   * **Published:** June 12, 2026\n   * **Summary:** Discusses how silent data corruption in RAG pipelines degrades LLM answer faithfulness without throwing runtime errors, and introduces automated quality gates using Great Expectations 1.x to catch stale and malformed embeddings before serving.\n\n2. **\"Advanced Perspectives on Data Observability and Quality Gates for Production RAG Systems\"** \n   * **Authors:** Anh Tran, Quoc Pham\n   * **Published:** June 2, 2026\n   * **Summary:** An extended empirical study by the same authors covering the same topic with further analysis on scaling parameters.",
+    "error": null
+  }
+]

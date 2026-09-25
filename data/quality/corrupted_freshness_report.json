@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-09-25T08:54:37.601085+00:00",
+  "threshold_days": 180,
+  "max_stale_ratio": 0.25,
+  "total_rows": 22,
+  "stale_rows": 7,
+  "stale_ratio": 0.3182,
+  "latest_published": "2026-06-12",
+  "oldest_published": "2025-03-28",
+  "latest_age_days": 105,
+  "median_age_days": 131.0,
+  "max_age_days": 546,
+  "is_fresh": false,
+  "age_distribution": {
+    "0-30": 0,
+    "31-90": 0,
+    "91-180": 15,
+    "181-365": 0,
+    ">365": 7
+  },
+  "alert": "7/22 papers older than 180 days (> 25%); refresh the source."
+}
