@@ -63,6 +63,18 @@ def test_clean_empty_input():
     assert list(build_clean_dataframe([], RUN_DATE).columns) == CLEAN_COLUMNS
 
 
+def test_clean_invalid_updated_falls_back_to_published_and_is_deterministic():
+    records = [
+        _record(paper_id="10.1/B", published="2026-06-01", updated="not-a-date"),
+        _record(paper_id="10.1/A", published="2026-07-01", updated=""),
+    ]
+    first = build_clean_dataframe(records, RUN_DATE.replace(tzinfo=None))
+    second = build_clean_dataframe(records, RUN_DATE.replace(tzinfo=None))
+    assert first["paper_id"].tolist() == ["10.1/a", "10.1/b"]
+    assert first.set_index("paper_id").loc["10.1/b", "updated"] == "2026-06-01"
+    pd.testing.assert_frame_equal(first, second)
+
+
 def test_corruption_applies_six_logged_scenarios(clean_df, tmp_path):
     log_path = tmp_path / "corruption_log.json"
     corrupted = corrupt_clean_dataframe(clean_df, log_path)
