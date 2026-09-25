@@ -196,6 +196,16 @@ GOOGLE_API_KEY=your_gemini_api_key_here
 
 ## 6. QUY TẮC PHỐI HỢP & CHECKLIST TRƯỚC KHI NỘP BÀI
 
+### Demo giao diện nhanh
+
+Sau khi cài môi trường, chạy dashboard local để trình bày trực quan ba trạng thái Baseline → Corrupted → Repaired:
+
+```powershell
+python demo/app.py
+```
+
+Mở `http://127.0.0.1:8765`. Nút **Chạy Baseline** tạo các artifact nền; sau đó dùng **Chạy Corruption & Repair** để hiển thị Quality Gate, Freshness SLA, 6 kịch bản lỗi và mức phục hồi metric. Dashboard chỉ đọc/hiển thị artifact trong `data/` và gọi đúng hai script pipeline hiện có.
+
 ### 👥 Phân chia vai trò gợi ý (Nhóm 4 thành viên):
 - **Thành viên 1 (Pipeline Lead & Integrator):** Điều phối luồng, quản lý cấu hình `core/`, kết nối `phase1.py` và `corruption_flow.py`.
 - **Thành viên 2 (Data Foundation Owner):** Phụ trách thu thập `crossref.py`, làm sạch `cleaning.py` và khôi phục dữ liệu từ Raw.

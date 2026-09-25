@@ -8,4 +8,5 @@ lab/
 doc_verification_report.md
 .coverage
 .pytest_cache/
+.idea/
 htmlcov/
